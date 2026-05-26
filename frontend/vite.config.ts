@@ -30,7 +30,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'animation-vendor': ['framer-motion', '@lenis/react'],
+          'animation-vendor': ['framer-motion', 'lenis'],
           'query-vendor': ['@tanstack/react-query', 'axios'],
         },
       },
