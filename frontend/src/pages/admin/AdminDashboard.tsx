@@ -72,6 +72,7 @@ const AdminDashboard = () => {
         message: data.message,
         data: data.data,
         timestamp: new Date(data.timestamp),
+        route: '/admin/bookings',
       });
       toast.success(data.message, { icon: '📅', duration: 5000 });
       queryClient.invalidateQueries({ queryKey: ['admin-bookings'] });
@@ -84,6 +85,7 @@ const AdminDashboard = () => {
         message: data.message,
         data: data.data,
         timestamp: new Date(data.timestamp),
+        route: '/admin/messages',
       });
       toast.success(data.message, { icon: '✉️', duration: 5000 });
       queryClient.invalidateQueries({ queryKey: ['admin-messages'] });

@@ -25,11 +25,6 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: false,
       retry: 1,
       staleTime: 5 * 60 * 1000, // 5 minutes
-      onError: (error: any) => {
-        if (error?.message?.includes('Network Error') || error?.code === 'ERR_NETWORK') {
-          toast.error('Network error. Please check your connection.');
-        }
-      },
     },
     mutations: {
       onError: (error: any) => {

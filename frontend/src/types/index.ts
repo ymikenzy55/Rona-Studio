@@ -60,15 +60,9 @@ export interface Booking {
   updatedAt: string;
 }
 
-export type ServiceType = 
-  | 'wedding-photography'
-  | 'wedding-videography'
-  | 'corporate-coverage'
-  | 'fashion-shoots'
-  | 'brand-content'
-  | 'events-coverage';
+export type ServiceType = string;
 
-export type PackageType = 'basic' | 'standard' | 'premium' | 'custom';
+export type PackageType = string;
 
 export type BookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
 
