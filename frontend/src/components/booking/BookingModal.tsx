@@ -98,11 +98,41 @@ export const BookingModal = () => {
   };
 
   const handleNext = async () => {
+    // Custom validation for service step
+    if (currentStep === 0) {
+      if (showCustomService && !customServiceValue.trim()) {
+        toast.error('Please specify your service');
+        return;
+      }
+      if (!showCustomService && !watch('service')) {
+        toast.error('Please select a service');
+        return;
+      }
+    }
+    
+    // Custom validation for package step
+    if (currentStep === 1) {
+      if (showCustomPackage && !customPackageValue.trim()) {
+        toast.error('Please specify your package needs');
+        return;
+      }
+      if (!showCustomPackage && !watch('package')) {
+        toast.error('Please select a package');
+        return;
+      }
+      if (!watch('preferredDate')) {
+        toast.error('Please select a date');
+        return;
+      }
+    }
+    
+    // Standard validation for other steps
     const fields = stepFields[currentStep];
-    if (fields) {
+    if (fields && currentStep !== 0 && currentStep !== 1) {
       const valid = await trigger(fields);
       if (!valid) return;
     }
+    
     if (currentStep < steps.length - 1) setCurrentStep(currentStep + 1);
   };
 
@@ -269,12 +299,19 @@ export const BookingModal = () => {
                               ? 'border-primary-yellow bg-primary-yellow/5'
                               : 'border-gray-200 hover:border-gray-300'
                           }`}
+                          onClick={() => {
+                            setShowCustomService(true);
+                            setValue('service', customServiceValue || 'other');
+                          }}
                         >
                           <input
                             type="radio"
-                            value="custom"
-                            {...register('service', { required: true })}
-                            onChange={() => setShowCustomService(true)}
+                            value="other"
+                            checked={showCustomService}
+                            onChange={() => {
+                              setShowCustomService(true);
+                              setValue('service', customServiceValue || 'other');
+                            }}
                             className="sr-only"
                           />
                           <span className="font-semibold text-primary-dark">
@@ -294,7 +331,7 @@ export const BookingModal = () => {
                           value={customServiceValue}
                           onChange={(e) => {
                             setCustomServiceValue(e.target.value);
-                            setValue('service', e.target.value);
+                            setValue('service', e.target.value || 'other');
                           }}
                           placeholder="Please specify your service"
                           className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 
@@ -302,8 +339,11 @@ export const BookingModal = () => {
                         />
                       </motion.div>
                     )}
-                    {errors.service && (
+                    {errors.service && !showCustomService && (
                       <p className="text-red-500 text-sm mt-2">Please select a service</p>
+                    )}
+                    {errors.service && showCustomService && !customServiceValue && (
+                      <p className="text-red-500 text-sm mt-2">Please specify your service</p>
                     )}
                   </motion.div>
                 )}
@@ -366,12 +406,19 @@ export const BookingModal = () => {
                                 ? 'border-primary-yellow bg-primary-yellow/5'
                                 : 'border-gray-200 hover:border-gray-300'
                             }`}
+                            onClick={() => {
+                              setShowCustomPackage(true);
+                              setValue('package', customPackageValue || 'other');
+                            }}
                           >
                             <input
                               type="radio"
-                              value="custom"
-                              {...register('package', { required: true })}
-                              onChange={() => setShowCustomPackage(true)}
+                              value="other"
+                              checked={showCustomPackage}
+                              onChange={() => {
+                                setShowCustomPackage(true);
+                                setValue('package', customPackageValue || 'other');
+                              }}
                               className="sr-only"
                             />
                             <div className="font-semibold text-primary-dark mb-1">
@@ -392,7 +439,7 @@ export const BookingModal = () => {
                             value={customPackageValue}
                             onChange={(e) => {
                               setCustomPackageValue(e.target.value);
-                              setValue('package', e.target.value);
+                              setValue('package', e.target.value || 'other');
                             }}
                             placeholder="Please specify your package needs"
                             className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 
@@ -400,8 +447,11 @@ export const BookingModal = () => {
                           />
                         </motion.div>
                       )}
-                      {errors.package && (
+                      {errors.package && !showCustomPackage && (
                         <p className="text-red-500 text-sm mt-2">Please select a package</p>
+                      )}
+                      {errors.package && showCustomPackage && !customPackageValue && (
+                        <p className="text-red-500 text-sm mt-2">Please specify your package needs</p>
                       )}
                     </div>
                   </motion.div>
