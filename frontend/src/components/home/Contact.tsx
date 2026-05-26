@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { Mail, Phone, MapPin, Send, Clock, Instagram, Facebook, Twitter, Dribbble } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Clock, Instagram, Facebook, Music } from 'lucide-react';
 import { contactApi } from '@/services/api';
 import { useSiteContent } from '@/hooks/useSiteContent';
 import type { ContactFormData } from '@/types';
@@ -17,8 +17,7 @@ const iconMap: Record<string, any> = {
 const socialIconMap: Record<string, any> = {
   Instagram,
   Facebook,
-  Twitter,
-  Dribbble,
+  TikTok: Music,
 };
 
 export const Contact = () => {
@@ -52,16 +51,13 @@ export const Contact = () => {
     },
   ];
   
-  const socialLinks = (contactContent.socialLinks || [
-    { platform: 'Instagram', url: 'https://instagram.com' },
-    { platform: 'Facebook', url: 'https://facebook.com' },
-    { platform: 'Twitter', url: 'https://twitter.com' },
-    { platform: 'Dribbble', url: 'https://dribbble.com' },
-  ]).map((social: any) => ({
-    icon: socialIconMap[social.platform] || Instagram,
-    href: social.url,
-    label: social.platform,
-  }));
+  const socialLinks = (contactContent.socialLinks || [])
+    .filter((social: any) => social.url && social.url.trim() !== '') // Only show links with URLs
+    .map((social: any) => ({
+      icon: socialIconMap[social.platform] || Instagram,
+      href: social.url,
+      label: social.platform,
+    }));
   const {
     register,
     handleSubmit,
@@ -327,27 +323,29 @@ export const Contact = () => {
                 );
               })}
 
-              {/* Social Links */}
-              <div className="bg-white rounded-2xl p-6 shadow-md border-2 border-gray-200">
-                <p className="font-bold text-primary-dark mb-4">Follow Us</p>
-                <div className="flex gap-3">
-                  {socialLinks.map((social) => (
-                    <motion.a
-                      key={social.label}
-                      href={social.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      whileHover={{ scale: 1.1, y: -2 }}
-                      whileTap={{ scale: 0.9 }}
-                      className="w-12 h-12 rounded-xl bg-primary-gray flex items-center justify-center
-                               text-primary-dark hover:bg-primary-yellow hover:text-white
-                               transition-all duration-300"
-                    >
-                      <social.icon size={20} />
-                    </motion.a>
-                  ))}
+              {/* Social Links - Only show if there are links */}
+              {socialLinks.length > 0 && (
+                <div className="bg-white rounded-2xl p-6 shadow-md border-2 border-gray-200">
+                  <p className="font-bold text-primary-dark mb-4">Follow Us</p>
+                  <div className="flex gap-3">
+                    {socialLinks.map((social) => (
+                      <motion.a
+                        key={social.label}
+                        href={social.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        whileHover={{ scale: 1.1, y: -2 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="w-12 h-12 rounded-xl bg-primary-gray flex items-center justify-center
+                                 text-primary-dark hover:bg-primary-yellow hover:text-white
+                                 transition-all duration-300"
+                      >
+                        <social.icon size={20} />
+                      </motion.a>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </motion.div>
           </div>
 

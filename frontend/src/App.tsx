@@ -28,8 +28,22 @@ const queryClient = new QueryClient({
     },
     mutations: {
       onError: (error: any) => {
-        if (error?.message?.includes('Network Error') || error?.code === 'ERR_NETWORK') {
-          toast.error('Network error. Please check your connection.');
+        const errorMessage = error?.message || '';
+        const errorCode = error?.code || '';
+        
+        if (errorMessage.includes('Network Error') || errorCode === 'ERR_NETWORK') {
+          toast.error('Network error. Please check your internet connection and try again.', {
+            duration: 5000,
+            id: 'network-error',
+          });
+        } else if (error?.response?.status === 500) {
+          toast.error('Server error. Please try again later.', {
+            duration: 5000,
+          });
+        } else if (error?.response?.status === 404) {
+          toast.error('Resource not found.', {
+            duration: 4000,
+          });
         }
       },
     },
@@ -105,6 +119,38 @@ function AppContent({ lenisRef }: { lenisRef: React.MutableRefObject<Lenis | nul
   const isAdminRoute = location.pathname.startsWith('/admin');
   const { isMenuOpen, isBookingModalOpen } = useStore();
   const queryClient = useQueryClient();
+
+  // Online/Offline detection
+  useEffect(() => {
+    const handleOnline = () => {
+      toast.success('Connection restored!', {
+        duration: 3000,
+        id: 'online-status',
+      });
+      // Refetch all queries when back online
+      queryClient.refetchQueries();
+    };
+
+    const handleOffline = () => {
+      toast.error('No internet connection. Please check your network.', {
+        duration: 0, // Keep showing until online
+        id: 'offline-status',
+      });
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+
+    // Check initial status
+    if (!navigator.onLine) {
+      handleOffline();
+    }
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [queryClient]);
 
   // Stop/start Lenis when modals open/close or on admin pages
   useEffect(() => {

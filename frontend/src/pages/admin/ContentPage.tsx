@@ -213,7 +213,7 @@ export const ContentPage = () => {
 
       <div className="bg-white rounded-xl p-4 sm:p-6 shadow-md">
         <div className="flex gap-2 border-b border-gray-200 mb-6 overflow-x-auto pb-2 hide-scrollbar">
-          {['hero', 'about', 'services', 'contact', 'booking', 'general'].map((tab) => (
+          {['hero', 'about', 'services', 'contact', 'general'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -1168,26 +1168,26 @@ export const ContentPage = () => {
                 {/* Twitter */}
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <label className="block text-sm font-bold text-primary-dark mb-2">
-                    Twitter/X URL
+                    TikTok URL
                   </label>
                   <input
                     type="url"
-                    value={getCurrentContent('contact').socialLinks?.find((s: any) => s.platform === 'Twitter')?.url || ''}
+                    value={getCurrentContent('contact').socialLinks?.find((s: any) => s.platform === 'TikTok')?.url || ''}
                     onChange={(e) => {
                       const socialLinks = getCurrentContent('contact').socialLinks || [
                         { platform: 'Instagram', url: '' },
                         { platform: 'Facebook', url: '' },
-                        { platform: 'Twitter', url: '' }
+                        { platform: 'TikTok', url: '' }
                       ];
-                      const index = socialLinks.findIndex((s: any) => s.platform === 'Twitter');
+                      const index = socialLinks.findIndex((s: any) => s.platform === 'TikTok');
                       if (index >= 0) {
-                        socialLinks[index] = { platform: 'Twitter', url: e.target.value };
+                        socialLinks[index] = { platform: 'TikTok', url: e.target.value };
                       } else {
-                        socialLinks.push({ platform: 'Twitter', url: e.target.value });
+                        socialLinks.push({ platform: 'TikTok', url: e.target.value });
                       }
                       updateField('contact', 'socialLinks', socialLinks);
                     }}
-                    placeholder="https://twitter.com/yourhandle"
+                    placeholder="https://tiktok.com/@yourhandle"
                     className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 
                              focus:border-primary-yellow focus:outline-none text-sm md:text-base"
                   />
