@@ -4,14 +4,6 @@ const bookingSchema = new mongoose.Schema(
   {
     service: {
       type: String,
-      enum: [
-        'wedding-photography',
-        'wedding-videography',
-        'corporate-coverage',
-        'fashion-shoots',
-        'brand-content',
-        'events-coverage',
-      ],
       required: [true, 'Service is required'],
     },
     preferredDate: {
@@ -20,7 +12,6 @@ const bookingSchema = new mongoose.Schema(
     },
     package: {
       type: String,
-      enum: ['basic', 'standard', 'premium', 'custom'],
       required: [true, 'Package is required'],
     },
     personalDetails: {
