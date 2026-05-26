@@ -32,6 +32,7 @@ const AdminLogin = () => {
       const { token, user } = response.data.data;
       
       localStorage.setItem('token', token);
+      localStorage.setItem('adminName', user.name || 'Admin');
       setAuth(true, user);
       toast.success('Login successful!');
       navigate('/admin/dashboard');

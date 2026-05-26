@@ -123,9 +123,11 @@ export const ProjectModal = ({ isOpen, onClose, project }: ProjectModalProps) =>
         return projectsApi.create(formData);
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['admin-projects'] });
-      queryClient.invalidateQueries({ queryKey: ['projects'] });
+    onSuccess: async () => {
+      // Refetch queries to ensure instant update
+      await queryClient.refetchQueries({ queryKey: ['admin-projects'] });
+      await queryClient.refetchQueries({ queryKey: ['projects'] });
+      await queryClient.refetchQueries({ queryKey: ['gallery-projects'] });
       toast.success(project ? 'Project updated successfully' : 'Project created successfully');
       onClose();
       reset();

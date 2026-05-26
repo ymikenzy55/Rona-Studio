@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FileText, Save, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -18,13 +18,19 @@ const HeroImagePicker = ({
   const [isUploading, setIsUploading] = useState(false);
   const [urlInput, setUrlInput] = useState(currentUrl);
 
+  // Sync urlInput with currentUrl when it changes
+  useEffect(() => {
+    setUrlInput(currentUrl);
+  }, [currentUrl]);
+
   const handleFileSelect = async (file: File | null, _preview: string | null) => {
     if (!file) return;
     setIsUploading(true);
     try {
       const response = await uploadApi.uploadImage(file);
-      onUrlChange(response.data.url);
-      setUrlInput(response.data.url);
+      const newUrl = response.data.url;
+      setUrlInput(newUrl);
+      onUrlChange(newUrl);
       toast.success('Image uploaded successfully');
     } catch {
       toast.error('Failed to upload image');
@@ -113,10 +119,13 @@ export const ContentPage = () => {
       );
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['site-content'] });
-      toast.success('Content updated successfully');
+    onSuccess: async () => {
+      // Refetch both admin and public site content queries
+      await queryClient.refetchQueries({ queryKey: ['site-content'] });
+      await queryClient.refetchQueries({ queryKey: ['siteContent'] });
+      // Clear edited content after refetch completes
       setEditedContent({});
+      toast.success('Content updated successfully');
     },
     onError: () => {
       toast.error('Failed to update content');
@@ -204,7 +213,7 @@ export const ContentPage = () => {
 
       <div className="bg-white rounded-xl p-4 sm:p-6 shadow-md">
         <div className="flex gap-2 border-b border-gray-200 mb-6 overflow-x-auto pb-2 hide-scrollbar">
-          {['hero', 'about', 'services', 'contact', 'general'].map((tab) => (
+          {['hero', 'about', 'services', 'contact', 'booking', 'general'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -340,6 +349,165 @@ export const ContentPage = () => {
               />
             </div>
 
+            <div className="border-t-2 border-gray-200 pt-6 mt-6">
+              <h3 className="text-lg font-bold text-primary-dark mb-4">Our Story Section</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                Add paragraphs and images to tell your story. Images will appear alongside the text.
+              </p>
+
+              <div className="mb-4">
+                <label className="block text-xs font-bold text-gray-700 mb-2">
+                  Story Title
+                </label>
+                <input
+                  type="text"
+                  value={getCurrentContent('about').story?.title || ''}
+                  onChange={(e) => {
+                    const story = getCurrentContent('about').story || {};
+                    updateField('about', 'story', { ...story, title: e.target.value });
+                  }}
+                  placeholder="Our Story"
+                  className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 
+                           focus:border-primary-yellow focus:outline-none"
+                />
+              </div>
+
+              {/* Story Paragraphs */}
+              <div className="space-y-4 mb-4">
+                <label className="block text-xs font-bold text-gray-700 mb-2">
+                  Story Paragraphs
+                </label>
+                {(getCurrentContent('about').story?.paragraphs || ['']).map((paragraph: string, index: number) => (
+                  <div key={index} className="flex gap-2">
+                    <textarea
+                      value={paragraph}
+                      onChange={(e) => {
+                        const story = getCurrentContent('about').story || {};
+                        const paragraphs = [...(story.paragraphs || [''])];
+                        paragraphs[index] = e.target.value;
+                        updateField('about', 'story', { ...story, paragraphs });
+                      }}
+                      rows={3}
+                      placeholder={`Paragraph ${index + 1}`}
+                      className="flex-1 px-3 py-2 rounded border border-gray-300 
+                               focus:border-primary-yellow focus:outline-none resize-none text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const story = getCurrentContent('about').story || {};
+                        const paragraphs = [...(story.paragraphs || [''])];
+                        paragraphs.splice(index, 1);
+                        updateField('about', 'story', { ...story, paragraphs });
+                      }}
+                      className="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-xs h-fit"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const story = getCurrentContent('about').story || {};
+                    const paragraphs = [...(story.paragraphs || ['']), ''];
+                    updateField('about', 'story', { ...story, paragraphs });
+                  }}
+                  className="px-4 py-2 bg-primary-yellow text-primary-dark rounded font-bold text-xs hover:bg-yellow-500 transition-colors"
+                >
+                  + Add Paragraph
+                </button>
+              </div>
+
+              {/* Story Images */}
+              <div className="border-t border-gray-300 pt-4 mt-4">
+                <label className="block text-xs font-bold text-gray-700 mb-2">
+                  Story Images (Optional)
+                </label>
+                <p className="text-xs text-gray-500 mb-3">
+                  Add images to accompany your story. They will be displayed alongside the text.
+                </p>
+                {(getCurrentContent('about').story?.images || []).map((image: string, index: number) => (
+                  <div key={index} className="mb-3 p-3 bg-white rounded border border-gray-300">
+                    <div className="flex gap-2 mb-2">
+                      <input
+                        type="url"
+                        value={image}
+                        onChange={(e) => {
+                          const story = getCurrentContent('about').story || {};
+                          const images = [...(story.images || [])];
+                          images[index] = e.target.value;
+                          updateField('about', 'story', { ...story, images });
+                        }}
+                        placeholder="https://images.unsplash.com/..."
+                        className="flex-1 px-3 py-2 rounded border border-gray-300 
+                                 focus:border-primary-yellow focus:outline-none text-sm"
+                      />
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'image/*';
+                          input.onchange = async (e: any) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            try {
+                              toast.loading('Uploading image...');
+                              const response = await uploadApi.uploadImage(file);
+                              const story = getCurrentContent('about').story || {};
+                              const images = [...(story.images || [])];
+                              images[index] = response.data.url;
+                              updateField('about', 'story', { ...story, images });
+                              toast.dismiss();
+                              toast.success('Image uploaded successfully');
+                            } catch {
+                              toast.dismiss();
+                              toast.error('Upload failed');
+                            }
+                          };
+                          input.click();
+                        }}
+                        className="px-4 py-2 bg-primary-yellow text-primary-dark rounded font-bold text-xs hover:bg-yellow-500 transition-colors whitespace-nowrap"
+                      >
+                        Upload
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const story = getCurrentContent('about').story || {};
+                          const images = [...(story.images || [])];
+                          images.splice(index, 1);
+                          updateField('about', 'story', { ...story, images });
+                        }}
+                        className="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-xs"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                    {image && (
+                      <img 
+                        src={image} 
+                        alt={`Story image ${index + 1}`}
+                        className="w-full h-32 object-cover rounded"
+                      />
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const story = getCurrentContent('about').story || {};
+                    const images = [...(story.images || []), ''];
+                    updateField('about', 'story', { ...story, images });
+                  }}
+                  className="px-4 py-2 bg-primary-yellow text-primary-dark rounded font-bold text-xs hover:bg-yellow-500 transition-colors"
+                >
+                  + Add Image
+                </button>
+              </div>
+            </div>
+
             <button
               onClick={() => handleSave('about')}
               disabled={updateMutation.isPending}
@@ -421,14 +589,51 @@ export const ContentPage = () => {
             </div>
 
             <div className="border-t-2 border-gray-200 pt-6 mt-6">
-              <h3 className="text-lg font-bold text-primary-dark mb-4">Services List</h3>
-              <p className="text-sm text-gray-600 mb-4">
-                Edit the services that appear on your website. Each service has a number, title, and description.
-              </p>
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-bold text-primary-dark">Services List</h3>
+                  <p className="text-sm text-gray-600 mt-1">
+                    Add, edit, or remove services. Each service has a number, title, description, and background image.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const services = [...(getCurrentContent('services').services || [])];
+                    services.push({
+                      number: `0${services.length + 1}`,
+                      title: '',
+                      description: '',
+                      image: ''
+                    });
+                    updateField('services', 'services', services);
+                  }}
+                  className="px-4 py-2 bg-primary-yellow text-primary-dark rounded-lg font-bold text-sm hover:bg-yellow-500 transition-colors whitespace-nowrap"
+                >
+                  + Add Service
+                </button>
+              </div>
               
               {(getCurrentContent('services').services || []).map((service: any, index: number) => (
-                <div key={index} className="mb-6 p-4 bg-gray-50 rounded-lg">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div key={index} className="mb-6 p-5 bg-gray-50 rounded-xl border-2 border-gray-200 relative">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs font-bold text-primary-yellow uppercase tracking-wider">
+                      Service {index + 1}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const services = [...(getCurrentContent('services').services || [])];
+                        services.splice(index, 1);
+                        updateField('services', 'services', services);
+                      }}
+                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-xs"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                     <div>
                       <label className="block text-xs font-bold text-gray-700 mb-1">
                         Number
@@ -441,6 +646,7 @@ export const ContentPage = () => {
                           services[index] = { ...services[index], number: e.target.value };
                           updateField('services', 'services', services);
                         }}
+                        placeholder="01"
                         className="w-full px-3 py-2 rounded border border-gray-300 
                                  focus:border-primary-yellow focus:outline-none text-sm"
                       />
@@ -458,13 +664,14 @@ export const ContentPage = () => {
                           services[index] = { ...services[index], title: e.target.value };
                           updateField('services', 'services', services);
                         }}
+                        placeholder="Wedding Photography"
                         className="w-full px-3 py-2 rounded border border-gray-300 
                                  focus:border-primary-yellow focus:outline-none text-sm"
                       />
                     </div>
                   </div>
                   
-                  <div className="mt-3">
+                  <div className="mb-4">
                     <label className="block text-xs font-bold text-gray-700 mb-1">
                       Description
                     </label>
@@ -476,9 +683,68 @@ export const ContentPage = () => {
                         updateField('services', 'services', services);
                       }}
                       rows={2}
+                      placeholder="Capture your special moments..."
                       className="w-full px-3 py-2 rounded border border-gray-300 
                                focus:border-primary-yellow focus:outline-none resize-none text-sm"
                     />
+                  </div>
+
+                  {/* Image Picker for this service */}
+                  <div className="border-t border-gray-300 pt-4 mt-4">
+                    <label className="block text-xs font-bold text-gray-700 mb-2">
+                      Background Image
+                    </label>
+                    <div className="flex gap-2">
+                      <input
+                        type="url"
+                        value={service.image || ''}
+                        onChange={(e) => {
+                          const services = [...(getCurrentContent('services').services || [])];
+                          services[index] = { ...services[index], image: e.target.value };
+                          updateField('services', 'services', services);
+                        }}
+                        placeholder="https://images.unsplash.com/..."
+                        className="flex-1 px-3 py-2 rounded border border-gray-300 
+                                 focus:border-primary-yellow focus:outline-none text-sm"
+                      />
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'image/*';
+                          input.onchange = async (e: any) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            try {
+                              toast.loading('Uploading image...');
+                              const response = await uploadApi.uploadImage(file);
+                              const services = [...(getCurrentContent('services').services || [])];
+                              services[index] = { ...services[index], image: response.data.url };
+                              updateField('services', 'services', services);
+                              toast.dismiss();
+                              toast.success('Image uploaded successfully');
+                            } catch {
+                              toast.dismiss();
+                              toast.error('Upload failed');
+                            }
+                          };
+                          input.click();
+                        }}
+                        className="px-4 py-2 bg-primary-yellow text-primary-dark rounded font-bold text-xs hover:bg-yellow-500 transition-colors whitespace-nowrap"
+                      >
+                        Upload Image
+                      </button>
+                    </div>
+                    {service.image && (
+                      <div className="mt-3">
+                        <img 
+                          src={service.image} 
+                          alt={`${service.title} preview`}
+                          className="w-full h-32 object-cover rounded-lg"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -770,7 +1036,7 @@ export const ContentPage = () => {
             <div className="border-t-2 border-gray-200 pt-6 mt-6">
               <h3 className="text-lg font-bold text-primary-dark mb-2">Social Media Links</h3>
               <p className="text-sm text-gray-600 mb-4">
-                Edit your social media profile URLs.
+                Edit your social media profile URLs. These links will appear in the footer and contact section.
               </p>
               
               <div className="space-y-4">
@@ -781,15 +1047,19 @@ export const ContentPage = () => {
                   </label>
                   <input
                     type="url"
-                    value={getCurrentContent('contact').socialLinks?.[0]?.url || 'https://instagram.com'}
+                    value={getCurrentContent('contact').socialLinks?.find((s: any) => s.platform === 'Instagram')?.url || ''}
                     onChange={(e) => {
                       const socialLinks = getCurrentContent('contact').socialLinks || [
                         { platform: 'Instagram', url: '' },
                         { platform: 'Facebook', url: '' },
-                        { platform: 'Twitter', url: '' },
-                        { platform: 'Dribbble', url: '' }
+                        { platform: 'Twitter', url: '' }
                       ];
-                      socialLinks[0] = { platform: 'Instagram', url: e.target.value };
+                      const index = socialLinks.findIndex((s: any) => s.platform === 'Instagram');
+                      if (index >= 0) {
+                        socialLinks[index] = { platform: 'Instagram', url: e.target.value };
+                      } else {
+                        socialLinks.push({ platform: 'Instagram', url: e.target.value });
+                      }
                       updateField('contact', 'socialLinks', socialLinks);
                     }}
                     placeholder="https://instagram.com/yourprofile"
@@ -805,15 +1075,19 @@ export const ContentPage = () => {
                   </label>
                   <input
                     type="url"
-                    value={getCurrentContent('contact').socialLinks?.[1]?.url || 'https://facebook.com'}
+                    value={getCurrentContent('contact').socialLinks?.find((s: any) => s.platform === 'Facebook')?.url || ''}
                     onChange={(e) => {
                       const socialLinks = getCurrentContent('contact').socialLinks || [
                         { platform: 'Instagram', url: '' },
                         { platform: 'Facebook', url: '' },
-                        { platform: 'Twitter', url: '' },
-                        { platform: 'Dribbble', url: '' }
+                        { platform: 'Twitter', url: '' }
                       ];
-                      socialLinks[1] = { platform: 'Facebook', url: e.target.value };
+                      const index = socialLinks.findIndex((s: any) => s.platform === 'Facebook');
+                      if (index >= 0) {
+                        socialLinks[index] = { platform: 'Facebook', url: e.target.value };
+                      } else {
+                        socialLinks.push({ platform: 'Facebook', url: e.target.value });
+                      }
                       updateField('contact', 'socialLinks', socialLinks);
                     }}
                     placeholder="https://facebook.com/yourpage"
@@ -825,46 +1099,26 @@ export const ContentPage = () => {
                 {/* Twitter */}
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <label className="block text-sm font-bold text-primary-dark mb-2">
-                    Twitter URL
+                    Twitter/X URL
                   </label>
                   <input
                     type="url"
-                    value={getCurrentContent('contact').socialLinks?.[2]?.url || 'https://twitter.com'}
+                    value={getCurrentContent('contact').socialLinks?.find((s: any) => s.platform === 'Twitter')?.url || ''}
                     onChange={(e) => {
                       const socialLinks = getCurrentContent('contact').socialLinks || [
                         { platform: 'Instagram', url: '' },
                         { platform: 'Facebook', url: '' },
-                        { platform: 'Twitter', url: '' },
-                        { platform: 'Dribbble', url: '' }
+                        { platform: 'Twitter', url: '' }
                       ];
-                      socialLinks[2] = { platform: 'Twitter', url: e.target.value };
+                      const index = socialLinks.findIndex((s: any) => s.platform === 'Twitter');
+                      if (index >= 0) {
+                        socialLinks[index] = { platform: 'Twitter', url: e.target.value };
+                      } else {
+                        socialLinks.push({ platform: 'Twitter', url: e.target.value });
+                      }
                       updateField('contact', 'socialLinks', socialLinks);
                     }}
                     placeholder="https://twitter.com/yourhandle"
-                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 
-                             focus:border-primary-yellow focus:outline-none text-sm md:text-base"
-                  />
-                </div>
-
-                {/* Dribbble */}
-                <div className="p-4 bg-gray-50 rounded-lg">
-                  <label className="block text-sm font-bold text-primary-dark mb-2">
-                    Dribbble URL
-                  </label>
-                  <input
-                    type="url"
-                    value={getCurrentContent('contact').socialLinks?.[3]?.url || 'https://dribbble.com'}
-                    onChange={(e) => {
-                      const socialLinks = getCurrentContent('contact').socialLinks || [
-                        { platform: 'Instagram', url: '' },
-                        { platform: 'Facebook', url: '' },
-                        { platform: 'Twitter', url: '' },
-                        { platform: 'Dribbble', url: '' }
-                      ];
-                      socialLinks[3] = { platform: 'Dribbble', url: e.target.value };
-                      updateField('contact', 'socialLinks', socialLinks);
-                    }}
-                    placeholder="https://dribbble.com/yourprofile"
                     className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 
                              focus:border-primary-yellow focus:outline-none text-sm md:text-base"
                   />

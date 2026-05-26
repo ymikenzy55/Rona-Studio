@@ -12,7 +12,7 @@ const iconMap: Record<string, any> = {
   Users,
 };
 
-const serviceImages = [
+const defaultServiceImages = [
   'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1000&auto=format&fit=crop',
   'https://images.unsplash.com/photo-1606216794074-735e91aa2c92?q=80&w=1000&auto=format&fit=crop',
   'https://images.unsplash.com/photo-1511578314322-379afb476865?q=80&w=1000&auto=format&fit=crop',
@@ -32,10 +32,13 @@ export const Services = () => {
 
   const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
   
+  // Get service images from content or use defaults
+  const serviceImages = servicesContent.serviceImages || defaultServiceImages;
+  
   const services = (servicesContent.services || []).map((service: any, index: number) => ({
     ...service,
     icon: iconMap[Object.keys(iconMap)[index % Object.keys(iconMap).length]],
-    image: serviceImages[index % serviceImages.length],
+    image: service.image || serviceImages[index % serviceImages.length],
   }));
 
   return (
@@ -139,7 +142,7 @@ export const Services = () => {
                     />
                     
                     {/* Gradient Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary-dark/40 via-transparent to-primary-yellow/20" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary-dark/20 via-transparent to-primary-yellow/10" />
                     
                     {/* Number Badge - Floating with glow */}
                     <motion.div
@@ -153,12 +156,6 @@ export const Services = () => {
                         {service.number}
                       </span>
                     </motion.div>
-
-                    {/* Hover Overlay */}
-                    <motion.div
-                      className="absolute inset-0 bg-primary-dark/80 backdrop-blur-sm
-                                 opacity-0 group-hover:opacity-100 transition-all duration-500"
-                    />
 
                     {/* Decorative corner accent */}
                     <div className="absolute bottom-0 left-0 w-32 h-32 bg-primary-yellow/20 

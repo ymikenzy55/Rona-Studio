@@ -57,6 +57,10 @@ export const DashboardOverview = () => {
     refetchInterval: 30000,
   });
 
+  // Get admin name from localStorage
+  const adminName = localStorage.getItem('adminName') || 'Admin';
+  const firstName = adminName.split(' ')[0];
+
   return (
     <div className="space-y-6">
       {/* Welcome banner */}
@@ -66,7 +70,7 @@ export const DashboardOverview = () => {
         className="bg-gradient-to-r from-primary-dark to-primary-dark/90 rounded-2xl p-5 text-white flex items-center justify-between"
       >
         <div>
-          <h2 className="text-xl font-display font-bold mb-1">Welcome back, Admin 👋</h2>
+          <h2 className="text-xl font-display font-bold mb-1">Welcome back, {firstName} 👋</h2>
           <p className="text-white/60 text-sm">Here's what's happening with Rona Studio today.</p>
         </div>
         <div className="hidden sm:flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">

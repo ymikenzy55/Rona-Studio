@@ -8,8 +8,8 @@ export const useSiteContent = () => {
       const response = await siteContentApi.getAll();
       return response.data.data;
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    refetchOnWindowFocus: false,
+    staleTime: 30 * 1000, // 30 seconds - faster updates
+    refetchOnWindowFocus: true, // Refetch when window regains focus
   });
 
   return {

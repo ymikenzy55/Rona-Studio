@@ -16,6 +16,7 @@ import { DashboardOverview } from './DashboardOverview';
 import { ContentPage } from './ContentPage';
 import { GalleryPage } from './GalleryPage';
 import { SettingsPage } from './SettingsPage';
+import { BookingConfigPage } from './BookingConfigPage';
 import { socketService } from '@/services/socket';
 import { useNotificationStore } from '@/store/notificationStore';
 
@@ -26,6 +27,7 @@ const PAGE_TITLES: Record<string, string> = {
   '/admin/messages': 'Messages',
   '/admin/content': 'Site Content',
   '/admin/gallery': 'Gallery',
+  '/admin/booking-config': 'Booking Form',
   '/admin/settings': 'Settings',
 };
 
@@ -182,6 +184,7 @@ const AdminDashboard = () => {
             <Route path="/messages" element={<MessagesPage />} />
             <Route path="/content" element={<ContentPage />} />
             <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/booking-config" element={<BookingConfigPage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Routes>
         </main>

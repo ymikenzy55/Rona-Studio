@@ -159,6 +159,28 @@ export const About = () => {
                 <p key={idx}>{paragraph}</p>
               ))}
             </div>
+
+            {/* Story Images */}
+            {aboutContent.story?.images && aboutContent.story.images.length > 0 && (
+              <div className="mt-6 grid grid-cols-2 gap-4">
+                {aboutContent.story.images.map((image: string, idx: number) => (
+                  <motion.div
+                    key={idx}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: idx * 0.1 }}
+                    className="relative aspect-square rounded-xl overflow-hidden shadow-lg"
+                  >
+                    <img
+                      src={image}
+                      alt={`Story ${idx + 1}`}
+                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                    />
+                  </motion.div>
+                ))}
+              </div>
+            )}
           </motion.div>
 
           {/* Right: Values - Slide from right */}

@@ -64,14 +64,41 @@
     @apply bg-primary-yellow/50;
   }
 
-  /* Prevent body scroll when modal/menu is open */
-  body.modal-open {
+  /* Sidebar scrollbar */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-track-transparent::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thumb-primary-yellow\/30::-webkit-scrollbar-thumb {
+    @apply bg-primary-yellow/30 rounded-full;
+  }
+
+  .scrollbar-thumb-primary-yellow\/30:hover::-webkit-scrollbar-thumb,
+  .hover\:scrollbar-thumb-primary-yellow\/50:hover::-webkit-scrollbar-thumb {
+    @apply bg-primary-yellow/50;
+  }
+
+  /* Prevent body scroll when modal/menu is open (but not in admin) */
+  body.modal-open:not(.admin-page) {
     overflow: hidden !important;
     padding-right: var(--scrollbar-width, 0);
   }
 
-  html.modal-open {
+  html.modal-open:not(.admin-page) {
     overflow: hidden !important;
+  }
+
+  /* Ensure admin pages can scroll */
+  body.admin-page {
+    overflow: auto !important;
+  }
+
+  html:has(body.admin-page) {
+    overflow: auto !important;
   }
 }
 

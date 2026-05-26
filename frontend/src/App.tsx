@@ -57,7 +57,7 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Initialize Lenis smooth scroll
+  // Initialize Lenis smooth scroll (only for non-admin pages)
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.8,
@@ -77,9 +77,10 @@ function App() {
       requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf);
+    const rafId = requestAnimationFrame(raf);
 
     return () => {
+      cancelAnimationFrame(rafId);
       lenis.destroy();
     };
   }, []);
@@ -105,16 +106,37 @@ function AppContent({ lenisRef }: { lenisRef: React.MutableRefObject<Lenis | nul
   const { isMenuOpen, isBookingModalOpen } = useStore();
   const queryClient = useQueryClient();
 
-  // Stop/start Lenis when modals open/close
+  // Stop/start Lenis when modals open/close or on admin pages
   useEffect(() => {
-    if (lenisRef.current) {
-      if (isMenuOpen || isBookingModalOpen) {
-        lenisRef.current.stop();
-      } else {
-        lenisRef.current.start();
+    if (isAdminRoute) {
+      // Completely destroy Lenis on admin pages
+      if (lenisRef.current) {
+        lenisRef.current.destroy();
+        lenisRef.current = null;
+      }
+      // Remove admin-page class and ensure body can scroll
+      document.body.classList.add('admin-page');
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+    } else {
+      // Remove admin-page class on public pages
+      document.body.classList.remove('admin-page');
+      
+      if (lenisRef.current) {
+        if (isMenuOpen || isBookingModalOpen) {
+          lenisRef.current.stop();
+        } else {
+          lenisRef.current.start();
+        }
       }
     }
-  }, [isMenuOpen, isBookingModalOpen, lenisRef]);
+    
+    return () => {
+      if (isAdminRoute) {
+        document.body.classList.remove('admin-page');
+      }
+    };
+  }, [isMenuOpen, isBookingModalOpen, lenisRef, isAdminRoute]);
 
   // Connect user socket for live updates on public pages
   useEffect(() => {

@@ -24,6 +24,7 @@ const navItems = [
   { path: '/admin/messages', icon: Mail, label: 'Messages' },
   { path: '/admin/content', icon: FileText, label: 'Site Content' },
   { path: '/admin/gallery', icon: Image, label: 'Gallery' },
+  { path: '/admin/booking-config', icon: Calendar, label: 'Booking Form' },
   { path: '/admin/settings', icon: Settings, label: 'Settings' },
 ];
 
@@ -107,7 +108,7 @@ const SidebarContent = ({
       )}
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1">
+      <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1 scrollbar-thin scrollbar-thumb-primary-yellow/30 scrollbar-track-transparent hover:scrollbar-thumb-primary-yellow/50">
         {navItems.map((item) => {
           const isActive =
             item.exact
