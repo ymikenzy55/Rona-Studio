@@ -167,34 +167,6 @@ export const Navbar = () => {
             </motion.div>
           </Link>
 
-          {/* Desktop Admin Link - Hidden on mobile */}
-          <Link 
-            to="/admin/login" 
-            className="hidden lg:flex items-center gap-2 z-40 px-4 py-2 rounded-full 
-                       bg-primary-yellow/10 hover:bg-primary-yellow border border-primary-yellow/30 
-                       hover:border-primary-yellow transition-all duration-300 group"
-            title="Admin Access Only"
-          >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              width="16" 
-              height="16" 
-              viewBox="0 0 24 24" 
-              fill="none" 
-              stroke="currentColor" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-              className="text-primary-yellow group-hover:text-primary-dark transition-colors"
-            >
-              <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-              <circle cx="12" cy="7" r="4" />
-            </svg>
-            <span className="text-sm text-primary-yellow group-hover:text-primary-dark font-medium transition-colors">
-              Admin
-            </span>
-          </Link>
-
           {/* Extraordinary Hamburger Button with Pulse Effect */}
           <motion.button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
