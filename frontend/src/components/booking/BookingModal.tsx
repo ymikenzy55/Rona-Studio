@@ -108,12 +108,18 @@ export const BookingModal = () => {
         customAnswers: answersPayload,
       };
       
-      console.log('Submitting booking:', bookingData);
+      // Only log in development
+      if (import.meta.env.DEV) {
+        console.log('Submitting booking:', bookingData);
+      }
       
       await bookingsApi.create(bookingData as any);
       setIsSuccess(true);
     } catch (error: any) {
-      console.error('Booking error:', error);
+      // Only log in development
+      if (import.meta.env.DEV) {
+        console.error('Booking error:', error);
+      }
       if (error?.message?.includes('Network Error') || error?.code === 'ERR_NETWORK') {
         toast.error('Network error. Please check your internet connection and try again.');
       } else {

@@ -22,7 +22,10 @@ class SocketService {
     });
 
     this.socket.on('connect', () => {
-      console.log(`WebSocket connected (${mode}):`, this.socket?.id);
+      // Only log in development
+      if (import.meta.env.DEV) {
+        console.log(`WebSocket connected (${mode}):`, this.socket?.id);
+      }
       if (mode === 'admin') {
         this.socket?.emit('join-admin');
       } else {
@@ -31,11 +34,17 @@ class SocketService {
     });
 
     this.socket.on('disconnect', () => {
-      console.log('WebSocket disconnected');
+      // Only log in development
+      if (import.meta.env.DEV) {
+        console.log('WebSocket disconnected');
+      }
     });
 
     this.socket.on('connect_error', (error) => {
-      console.error('WebSocket connection error:', error);
+      // Only log in development
+      if (import.meta.env.DEV) {
+        console.error('WebSocket connection error:', error);
+      }
     });
 
     return this.socket;
