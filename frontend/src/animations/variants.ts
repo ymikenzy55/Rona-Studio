@@ -8,48 +8,23 @@ export const fadeIn: Variants = {
 };
 
 export const fadeInUp: Variants = {
-  initial: { opacity: 0, y: 60 },
+  initial: { opacity: 0, y: 30 },
   animate: { 
     opacity: 1, 
     y: 0,
     transition: {
-      duration: 0.8,
-      ease: [0.6, 0.05, 0.01, 0.9],
+      duration: 0.4,
+      ease: 'easeOut',
     },
   },
-  exit: { opacity: 0, y: 20 },
+  exit: { opacity: 0, y: 10 },
 };
 
 export const fadeInDown: Variants = {
-  initial: { opacity: 0, y: -60 },
+  initial: { opacity: 0, y: -30 },
   animate: { 
     opacity: 1, 
     y: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.6, 0.05, 0.01, 0.9],
-    },
-  },
-};
-
-// Scale Animations
-export const scaleIn: Variants = {
-  initial: { opacity: 0, scale: 0.9 },
-  animate: { 
-    opacity: 1, 
-    scale: 1,
-    transition: {
-      duration: 0.6,
-      ease: [0.6, 0.05, 0.01, 0.9],
-    },
-  },
-  exit: { opacity: 0, scale: 0.95 },
-};
-
-export const scaleUp: Variants = {
-  initial: { scale: 1 },
-  animate: { 
-    scale: 1.05,
     transition: {
       duration: 0.4,
       ease: 'easeOut',
@@ -57,27 +32,52 @@ export const scaleUp: Variants = {
   },
 };
 
+// Scale Animations
+export const scaleIn: Variants = {
+  initial: { opacity: 0, scale: 0.95 },
+  animate: { 
+    opacity: 1, 
+    scale: 1,
+    transition: {
+      duration: 0.3,
+      ease: 'easeOut',
+    },
+  },
+  exit: { opacity: 0, scale: 0.98 },
+};
+
+export const scaleUp: Variants = {
+  initial: { scale: 1 },
+  animate: { 
+    scale: 1.03,
+    transition: {
+      duration: 0.2,
+      ease: 'easeOut',
+    },
+  },
+};
+
 // Slide Animations
 export const slideInLeft: Variants = {
-  initial: { opacity: 0, x: -100 },
+  initial: { opacity: 0, x: -50 },
   animate: { 
     opacity: 1, 
     x: 0,
     transition: {
-      duration: 0.8,
-      ease: [0.6, 0.05, 0.01, 0.9],
+      duration: 0.4,
+      ease: 'easeOut',
     },
   },
 };
 
 export const slideInRight: Variants = {
-  initial: { opacity: 0, x: 100 },
+  initial: { opacity: 0, x: 50 },
   animate: { 
     opacity: 1, 
     x: 0,
     transition: {
-      duration: 0.8,
-      ease: [0.6, 0.05, 0.01, 0.9],
+      duration: 0.4,
+      ease: 'easeOut',
     },
   },
 };
@@ -87,20 +87,20 @@ export const staggerContainer: Variants = {
   initial: {},
   animate: {
     transition: {
-      staggerChildren: 0.1,
-      delayChildren: 0.2,
+      staggerChildren: 0.05,
+      delayChildren: 0.1,
     },
   },
 };
 
 export const staggerItem: Variants = {
-  initial: { opacity: 0, y: 30 },
+  initial: { opacity: 0, y: 20 },
   animate: { 
     opacity: 1, 
     y: 0,
     transition: {
-      duration: 0.6,
-      ease: [0.6, 0.05, 0.01, 0.9],
+      duration: 0.3,
+      ease: 'easeOut',
     },
   },
 };
@@ -115,8 +115,8 @@ export const textReveal: Variants = {
     y: 0,
     opacity: 1,
     transition: {
-      duration: 0.8,
-      ease: [0.6, 0.05, 0.01, 0.9],
+      duration: 0.4,
+      ease: 'easeOut',
     },
   },
 };
@@ -125,7 +125,7 @@ export const textRevealContainer: Variants = {
   initial: {},
   animate: {
     transition: {
-      staggerChildren: 0.05,
+      staggerChildren: 0.03,
     },
   },
 };
@@ -133,15 +133,15 @@ export const textRevealContainer: Variants = {
 // Image Reveal
 export const imageReveal: Variants = {
   initial: { 
-    scale: 1.2,
+    scale: 1.1,
     opacity: 0,
   },
   animate: { 
     scale: 1,
     opacity: 1,
     transition: {
-      duration: 1.2,
-      ease: [0.6, 0.05, 0.01, 0.9],
+      duration: 0.6,
+      ease: 'easeOut',
     },
   },
 };
@@ -151,34 +151,34 @@ export const modalBackdrop: Variants = {
   initial: { opacity: 0 },
   animate: { 
     opacity: 1,
-    transition: { duration: 0.3 },
+    transition: { duration: 0.2 },
   },
   exit: { 
     opacity: 0,
-    transition: { duration: 0.3 },
+    transition: { duration: 0.2 },
   },
 };
 
 export const modalContent: Variants = {
   initial: { 
     opacity: 0, 
-    scale: 0.95,
-    y: 20,
+    scale: 0.98,
+    y: 10,
   },
   animate: { 
     opacity: 1, 
     scale: 1,
     y: 0,
     transition: {
-      duration: 0.4,
-      ease: [0.6, 0.05, 0.01, 0.9],
+      duration: 0.2,
+      ease: 'easeOut',
     },
   },
   exit: { 
     opacity: 0, 
-    scale: 0.95,
-    y: 20,
-    transition: { duration: 0.3 },
+    scale: 0.98,
+    y: 10,
+    transition: { duration: 0.15 },
   },
 };
 
@@ -190,15 +190,15 @@ export const menuContainer: Variants = {
   animate: { 
     clipPath: 'circle(150% at 100% 0%)',
     transition: {
-      duration: 0.8,
-      ease: [0.6, 0.05, 0.01, 0.9],
+      duration: 0.5,
+      ease: 'easeInOut',
     },
   },
   exit: { 
     clipPath: 'circle(0% at 100% 0%)',
     transition: {
-      duration: 0.6,
-      ease: [0.6, 0.05, 0.01, 0.9],
+      duration: 0.4,
+      ease: 'easeInOut',
     },
   },
 };
@@ -206,7 +206,7 @@ export const menuContainer: Variants = {
 export const menuItem: Variants = {
   initial: { 
     opacity: 0, 
-    x: 50,
+    x: 30,
   },
   animate: { 
     opacity: 1, 
@@ -214,7 +214,7 @@ export const menuItem: Variants = {
   },
   exit: { 
     opacity: 0, 
-    x: 50,
+    x: 30,
   },
 };
 
@@ -222,21 +222,21 @@ export const menuItem: Variants = {
 export const pageTransition: Variants = {
   initial: { 
     opacity: 0,
-    y: 20,
+    y: 10,
   },
   animate: { 
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.6,
-      ease: [0.6, 0.05, 0.01, 0.9],
+      duration: 0.3,
+      ease: 'easeOut',
     },
   },
   exit: { 
     opacity: 0,
-    y: -20,
+    y: -10,
     transition: {
-      duration: 0.4,
+      duration: 0.2,
     },
   },
 };
@@ -245,9 +245,9 @@ export const pageTransition: Variants = {
 export const hoverLift = {
   rest: { y: 0 },
   hover: { 
-    y: -8,
+    y: -4,
     transition: {
-      duration: 0.3,
+      duration: 0.2,
       ease: 'easeOut',
     },
   },
@@ -256,9 +256,9 @@ export const hoverLift = {
 export const hoverScale = {
   rest: { scale: 1 },
   hover: { 
-    scale: 1.05,
+    scale: 1.02,
     transition: {
-      duration: 0.3,
+      duration: 0.2,
       ease: 'easeOut',
     },
   },
@@ -271,7 +271,7 @@ export const magneticButton = {
     x: 0, 
     y: 0,
     transition: {
-      duration: 0.3,
+      duration: 0.2,
       ease: 'easeOut',
     },
   },

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
-import { X, Upload, Trash2, Plus, Video, Image as ImageIcon } from 'lucide-react';
+import { X, Upload, Trash2, Plus, Image as ImageIcon } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { projectsApi } from '@/services/api';
 import axios from 'axios';
@@ -26,7 +26,6 @@ export const ProjectModal = ({ isOpen, onClose, project }: ProjectModalProps) =>
     mediaFile?: File;
     mediaPreview?: string;
     mediaUrl?: string;
-    mediaType?: 'image' | 'video';
   }
   const [sections, setSections] = useState<Section[]>([]);
   const sectionFileRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -71,7 +70,6 @@ export const ProjectModal = ({ isOpen, onClose, project }: ProjectModalProps) =>
           title: s.title || '',
           description: s.description || '',
           mediaUrl: s.mediaUrl || '',
-          mediaType: s.mediaType || 'image',
         }))
       );
     } else {
@@ -105,11 +103,10 @@ export const ProjectModal = ({ isOpen, onClose, project }: ProjectModalProps) =>
       });
 
       // Add sections JSON (metadata) and section media files
-      const sectionsMetadata = sections.map(({ title, description, mediaUrl, mediaType }, i) => ({
+      const sectionsMetadata = sections.map(({ title, description, mediaUrl }, i) => ({
         title,
         description,
         mediaUrl: mediaUrl || '',
-        mediaType: mediaType || 'image',
         order: i,
       }));
       formData.append('sections', JSON.stringify(sectionsMetadata));
@@ -209,13 +206,6 @@ export const ProjectModal = ({ isOpen, onClose, project }: ProjectModalProps) =>
 
         <div className="overflow-y-auto flex-1 min-h-0 overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
           <form onSubmit={handleSubmit(onSubmit)} className="p-4 sm:p-6 space-y-4 sm:space-y-6 pb-24 sm:pb-6">
-          
-          {/* Video Support Info */}
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg">
-            <p className="text-sm text-blue-800">
-              <strong>🎥 Video Support:</strong> You can now add videos to project sections! Upload images or videos (up to 50MB) in the sections below.
-            </p>
-          </div>
 
           {/* Title */}
           <div>
@@ -380,7 +370,7 @@ export const ProjectModal = ({ isOpen, onClose, project }: ProjectModalProps) =>
             </div>
 
             {sections.length === 0 && (
-              <p className="text-xs text-gray-400 py-2">No sections added. Sections let you add extra images or videos with captions to a project.</p>
+              <p className="text-xs text-gray-400 py-2">No sections added. Sections let you add extra images with captions to a project.</p>
             )}
 
             <div className="space-y-4">
@@ -415,18 +405,7 @@ export const ProjectModal = ({ isOpen, onClose, project }: ProjectModalProps) =>
                   {/* Media upload */}
                   {sec.mediaPreview || sec.mediaUrl ? (
                     <div className="relative group">
-                      {(sec.mediaType === 'video') ? (
-                        <video 
-                          src={sec.mediaPreview || sec.mediaUrl} 
-                          className="w-full h-32 object-cover rounded-lg" 
-                          controls
-                        />
-                      ) : (
-                        <img src={sec.mediaPreview || sec.mediaUrl} alt="section" className="w-full h-32 object-cover rounded-lg" />
-                      )}
-                      <div className="absolute top-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded-lg">
-                        {sec.mediaType === 'video' ? '🎥 Video' : '🖼️ Image'}
-                      </div>
+                      <img src={sec.mediaPreview || sec.mediaUrl} alt="section" className="w-full h-32 object-cover rounded-lg" />
                       <button
                         type="button"
                         onClick={() => setSections((prev) => prev.map((s, i) => i === idx ? { ...s, mediaFile: undefined, mediaPreview: undefined, mediaUrl: undefined } : s))}
@@ -437,34 +416,23 @@ export const ProjectModal = ({ isOpen, onClose, project }: ProjectModalProps) =>
                     </div>
                   ) : (
                     <label className="flex flex-col items-center justify-center gap-2 px-4 py-6 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-primary-yellow hover:bg-yellow-50/50 transition-all">
-                      <div className="flex gap-3">
-                        <div className="flex flex-col items-center gap-1">
-                          <ImageIcon size={24} className="text-gray-400" />
-                          <span className="text-xs text-gray-500">Image</span>
-                        </div>
-                        <div className="text-gray-300">or</div>
-                        <div className="flex flex-col items-center gap-1">
-                          <Video size={24} className="text-gray-400" />
-                          <span className="text-xs text-gray-500">Video</span>
-                        </div>
-                      </div>
-                      <span className="text-sm text-gray-600 font-medium">Click to upload media</span>
-                      <span className="text-xs text-gray-400">Images (JPG, PNG) or Videos (MP4, MOV) up to 50MB</span>
+                      <ImageIcon size={24} className="text-gray-400" />
+                      <span className="text-sm text-gray-600 font-medium">Click to upload image</span>
+                      <span className="text-xs text-gray-400">JPG, PNG up to 10MB</span>
                       <input
                         type="file"
-                        accept="image/*,video/*"
+                        accept="image/*"
                         className="hidden"
                         ref={(el) => { sectionFileRefs.current[idx] = el; }}
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           if (!file) return;
-                          const isVideo = file.type.startsWith('video/');
                           const reader = new FileReader();
                           reader.onloadend = () => {
                             setSections((prev) =>
                               prev.map((s, i) =>
                                 i === idx
-                                  ? { ...s, mediaFile: file, mediaPreview: reader.result as string, mediaType: isVideo ? 'video' : 'image' }
+                                  ? { ...s, mediaFile: file, mediaPreview: reader.result as string }
                                   : s
                               )
                             );
