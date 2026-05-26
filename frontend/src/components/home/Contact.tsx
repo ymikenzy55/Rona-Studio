@@ -8,6 +8,7 @@ import type { ContactFormData } from '@/types';
 
 const iconMap: Record<string, any> = {
   phone: Phone,
+  whatsapp: Phone,
   email: Mail,
   location: MapPin,
   hours: Clock,
@@ -363,7 +364,7 @@ export const Contact = () => {
           className="w-full h-full will-change-transform"
         >
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3970.8267619758814!2d-0.1969!3d5.6037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNcKwMzYnMTMuMyJOIDDCsDExJzQ4LjgiVw!5e0!3m2!1sen!2sgh!4v1234567890"
+            src={contactContent.mapEmbedUrl || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3970.8267619758814!2d-0.1969!3d5.6037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNcKwMzYnMTMuMyJOIDDCsDExJzQ4LjgiVw!5e0!3m2!1sen!2sgh!4v1234567890"}
             width="100%"
             height="100%"
             style={{ border: 0 }}
@@ -389,8 +390,22 @@ export const Contact = () => {
             </div>
             <div>
               <p className="font-bold text-primary-dark mb-1">Visit Our Studio</p>
-              <p className="text-gray-700 text-sm">{contactContent.mapAddress?.street || '123 Studio Street'}, {contactContent.mapAddress?.area || 'Creative District'}</p>
-              <p className="text-gray-700 text-sm">{contactContent.mapAddress?.city || 'Accra, Ghana'}</p>
+              <p className="text-gray-700 text-sm">
+                {(() => {
+                  const locationInfo = contactInfo.find(info => info.type === 'location');
+                  return locationInfo?.value || '123 Studio Street, Accra, Ghana';
+                })()}
+              </p>
+              {contactContent.mapUrl && (
+                <a 
+                  href={contactContent.mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-primary-yellow hover:text-primary-dark font-semibold text-sm mt-2 transition-colors"
+                >
+                  Get Directions →
+                </a>
+              )}
             </div>
           </div>
         </motion.div>

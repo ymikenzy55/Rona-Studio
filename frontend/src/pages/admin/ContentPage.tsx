@@ -808,14 +808,14 @@ export const ContentPage = () => {
             <div className="border-t-2 border-gray-200 pt-6 mt-6">
               <h3 className="text-lg font-bold text-primary-dark mb-2">Contact Information</h3>
               <p className="text-sm text-gray-600 mb-4">
-                Edit phone, email, location, and hours that appear on the contact page.
+                Edit phone, WhatsApp, email, location, and hours that appear on the contact page.
               </p>
               
               <div className="space-y-4">
                 {/* Phone */}
                 <div className="p-4 bg-gray-50 rounded-lg">
                   <label className="block text-sm font-bold text-primary-dark mb-2">
-                    Phone Number
+                    Phone Number (Call)
                   </label>
                   <input
                     type="text"
@@ -833,17 +833,6 @@ export const ContentPage = () => {
                       const currentContactInfo = getCurrentContent('contact').contactInfo || [];
                       let contactInfo = [...currentContactInfo];
                       
-                      // Ensure we have the default structure
-                      if (contactInfo.length === 0) {
-                        contactInfo = [
-                          { type: 'phone', label: 'Phone', value: '', link: '' },
-                          { type: 'email', label: 'Email', value: '', link: '' },
-                          { type: 'location', label: 'Location', value: '', link: '' },
-                          { type: 'hours', label: 'Hours', value: '', link: null }
-                        ];
-                      }
-                      
-                      // Find and update phone
                       const phoneIndex = contactInfo.findIndex(info => info.type === 'phone');
                       if (phoneIndex >= 0) {
                         contactInfo[phoneIndex] = { 
@@ -852,7 +841,7 @@ export const ContentPage = () => {
                           link: `tel:${e.target.value.replace(/\s/g, '')}`
                         };
                       } else {
-                        contactInfo.unshift({ 
+                        contactInfo.push({ 
                           type: 'phone', 
                           label: 'Phone', 
                           value: e.target.value,
@@ -866,6 +855,54 @@ export const ContentPage = () => {
                     className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 
                              focus:border-primary-yellow focus:outline-none text-sm md:text-base"
                   />
+                  <p className="text-xs text-gray-500 mt-1">This will allow users to call you directly</p>
+                </div>
+
+                {/* WhatsApp */}
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <label className="block text-sm font-bold text-primary-dark mb-2">
+                    WhatsApp Number
+                  </label>
+                  <input
+                    type="text"
+                    value={
+                      (() => {
+                        const contactInfo = getCurrentContent('contact').contactInfo;
+                        if (Array.isArray(contactInfo) && contactInfo.length > 0) {
+                          const whatsappInfo = contactInfo.find(info => info.type === 'whatsapp');
+                          return whatsappInfo?.value || '';
+                        }
+                        return '';
+                      })()
+                    }
+                    onChange={(e) => {
+                      const currentContactInfo = getCurrentContent('contact').contactInfo || [];
+                      let contactInfo = [...currentContactInfo];
+                      
+                      const whatsappIndex = contactInfo.findIndex(info => info.type === 'whatsapp');
+                      const cleanNumber = e.target.value.replace(/\s/g, '');
+                      if (whatsappIndex >= 0) {
+                        contactInfo[whatsappIndex] = { 
+                          ...contactInfo[whatsappIndex], 
+                          value: e.target.value,
+                          link: `https://wa.me/${cleanNumber}`
+                        };
+                      } else {
+                        contactInfo.push({ 
+                          type: 'whatsapp', 
+                          label: 'WhatsApp', 
+                          value: e.target.value,
+                          link: `https://wa.me/${cleanNumber}`
+                        });
+                      }
+                      
+                      updateField('contact', 'contactInfo', contactInfo);
+                    }}
+                    placeholder="+233123456789"
+                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 
+                             focus:border-primary-yellow focus:outline-none text-sm md:text-base"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Include country code (e.g., +233123456789). Users will be able to chat with you on WhatsApp.</p>
                 </div>
 
                 {/* Email */}
@@ -888,15 +925,6 @@ export const ContentPage = () => {
                     onChange={(e) => {
                       const currentContactInfo = getCurrentContent('contact').contactInfo || [];
                       let contactInfo = [...currentContactInfo];
-                      
-                      if (contactInfo.length === 0) {
-                        contactInfo = [
-                          { type: 'phone', label: 'Phone', value: '', link: '' },
-                          { type: 'email', label: 'Email', value: '', link: '' },
-                          { type: 'location', label: 'Location', value: '', link: '' },
-                          { type: 'hours', label: 'Hours', value: '', link: null }
-                        ];
-                      }
                       
                       const emailIndex = contactInfo.findIndex(info => info.type === 'email');
                       if (emailIndex >= 0) {
@@ -943,28 +971,21 @@ export const ContentPage = () => {
                       const currentContactInfo = getCurrentContent('contact').contactInfo || [];
                       let contactInfo = [...currentContactInfo];
                       
-                      if (contactInfo.length === 0) {
-                        contactInfo = [
-                          { type: 'phone', label: 'Phone', value: '', link: '' },
-                          { type: 'email', label: 'Email', value: '', link: '' },
-                          { type: 'location', label: 'Location', value: '', link: '' },
-                          { type: 'hours', label: 'Hours', value: '', link: null }
-                        ];
-                      }
-                      
                       const locationIndex = contactInfo.findIndex(info => info.type === 'location');
+                      // Use the map URL if available, otherwise use default
+                      const mapUrl = getCurrentContent('contact').mapUrl || 'https://maps.google.com';
                       if (locationIndex >= 0) {
                         contactInfo[locationIndex] = { 
                           ...contactInfo[locationIndex], 
                           value: e.target.value,
-                          link: 'https://maps.google.com'
+                          link: mapUrl
                         };
                       } else {
                         contactInfo.push({ 
                           type: 'location', 
                           label: 'Location', 
                           value: e.target.value,
-                          link: 'https://maps.google.com'
+                          link: mapUrl
                         });
                       }
                       
@@ -974,6 +995,63 @@ export const ContentPage = () => {
                     className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 
                              focus:border-primary-yellow focus:outline-none text-sm md:text-base"
                   />
+                </div>
+
+                {/* Google Maps URL */}
+                <div className="p-4 bg-blue-50 rounded-lg border-l-4 border-blue-500">
+                  <label className="block text-sm font-bold text-primary-dark mb-2">
+                    Google Maps Link
+                  </label>
+                  <input
+                    type="url"
+                    value={getCurrentContent('contact').mapUrl || ''}
+                    onChange={(e) => {
+                      updateField('contact', 'mapUrl', e.target.value);
+                      // Also update the location link
+                      const currentContactInfo = getCurrentContent('contact').contactInfo || [];
+                      let contactInfo = [...currentContactInfo];
+                      const locationIndex = contactInfo.findIndex(info => info.type === 'location');
+                      if (locationIndex >= 0) {
+                        contactInfo[locationIndex] = { 
+                          ...contactInfo[locationIndex], 
+                          link: e.target.value
+                        };
+                        updateField('contact', 'contactInfo', contactInfo);
+                      }
+                    }}
+                    placeholder="https://maps.google.com/?q=Your+Location"
+                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 
+                             focus:border-primary-yellow focus:outline-none text-sm md:text-base"
+                  />
+                  <p className="text-xs text-gray-600 mt-2">
+                    <strong>How to get your Google Maps link:</strong><br/>
+                    1. Go to <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Google Maps</a><br/>
+                    2. Search for your location<br/>
+                    3. Click "Share" button<br/>
+                    4. Copy the link and paste it here
+                  </p>
+                </div>
+
+                {/* Google Maps Embed URL */}
+                <div className="p-4 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
+                  <label className="block text-sm font-bold text-primary-dark mb-2">
+                    Google Maps Embed URL (For Map Display)
+                  </label>
+                  <textarea
+                    value={getCurrentContent('contact').mapEmbedUrl || ''}
+                    onChange={(e) => updateField('contact', 'mapEmbedUrl', e.target.value)}
+                    placeholder="https://www.google.com/maps/embed?pb=..."
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-lg border-2 border-gray-200 
+                             focus:border-primary-yellow focus:outline-none text-sm md:text-base resize-none"
+                  />
+                  <p className="text-xs text-gray-600 mt-2">
+                    <strong>How to get embed URL:</strong><br/>
+                    1. Go to <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">Google Maps</a><br/>
+                    2. Search for your location<br/>
+                    3. Click "Share" → "Embed a map"<br/>
+                    4. Copy the URL from the iframe src and paste it here
+                  </p>
                 </div>
 
                 {/* Hours */}
@@ -996,15 +1074,6 @@ export const ContentPage = () => {
                     onChange={(e) => {
                       const currentContactInfo = getCurrentContent('contact').contactInfo || [];
                       let contactInfo = [...currentContactInfo];
-                      
-                      if (contactInfo.length === 0) {
-                        contactInfo = [
-                          { type: 'phone', label: 'Phone', value: '', link: '' },
-                          { type: 'email', label: 'Email', value: '', link: '' },
-                          { type: 'location', label: 'Location', value: '', link: '' },
-                          { type: 'hours', label: 'Hours', value: '', link: null }
-                        ];
-                      }
                       
                       const hoursIndex = contactInfo.findIndex(info => info.type === 'hours');
                       if (hoursIndex >= 0) {
