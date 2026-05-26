@@ -215,6 +215,7 @@ function AppContent({ lenisRef }: { lenisRef: React.MutableRefObject<Lenis | nul
           <Route path="/" element={<Home />} />
           <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/admin/*" element={<AdminDashboard />} />
+          <Route path="*" element={<Home />} />
         </Routes>
       </Suspense>
 
