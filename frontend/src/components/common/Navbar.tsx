@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Instagram, Facebook, Twitter, Dribbble, Mail, Phone } from 'lucide-react';
+import { Instagram, Facebook, Mail, Phone, MessageCircle, MapPin } from 'lucide-react';
 import { useStore } from '@/store/useStore';
 import { useSiteContent } from '@/hooks/useSiteContent';
 
@@ -14,12 +14,19 @@ const navLinks = [
   { name: 'Admin', path: '/admin/login', number: '06', section: 'admin', isAdmin: true },
 ];
 
-const socialLinks = [
-  { icon: Dribbble, href: 'https://dribbble.com', label: 'Dribbble', color: 'hover:bg-pink-400' },
-  { icon: Instagram, href: 'https://instagram.com', label: 'Instagram', color: 'hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-500' },
-  { icon: Facebook, href: 'https://facebook.com', label: 'Facebook', color: 'hover:bg-blue-600' },
-  { icon: Twitter, href: 'https://twitter.com', label: 'Twitter', color: 'hover:bg-sky-500' },
-];
+// TikTok Icon Component
+const TikTokIcon = ({ size = 20, className = '' }: { size?: number; className?: string }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className={className}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+  </svg>
+);
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -32,29 +39,31 @@ export const Navbar = () => {
   // Get contact info from database
   const contactContent = content.contact || {};
   const contactInfo = contactContent.contactInfo || [];
-  const phoneInfo = contactInfo.find((info: any) => info.type === 'phone') || { value: '+233 123 456 789', link: 'tel:+233123456789' };
-  const emailInfo = contactInfo.find((info: any) => info.type === 'email') || { value: 'hello@ronastudio.com', link: 'mailto:hello@ronastudio.com' };
   
-  // Get social links from database
-  const socialLinksFromDB = (contactContent.socialLinks || []).map((social: any) => {
-    const iconMap: Record<string, any> = {
-      Instagram,
-      Facebook,
-      Twitter,
-      Dribbble,
-    };
-    return {
-      icon: iconMap[social.platform] || Instagram,
+  // Get phone, WhatsApp, email, and location
+  const phoneInfo = contactInfo.find((info: any) => info.type === 'phone');
+  const whatsappInfo = contactInfo.find((info: any) => info.type === 'whatsapp');
+  const emailInfo = contactInfo.find((info: any) => info.type === 'email');
+  const locationInfo = contactInfo.find((info: any) => info.type === 'location');
+  
+  // Get social links from database (only ones with URLs)
+  const socialIconMap: Record<string, any> = {
+    Instagram,
+    Facebook,
+    TikTok: TikTokIcon,
+  };
+  
+  const socialLinksFromDB = (contactContent.socialLinks || [])
+    .filter((social: any) => social.url && social.url.trim() !== '')
+    .map((social: any) => ({
+      icon: socialIconMap[social.platform] || Instagram,
       href: social.url,
       label: social.platform,
       color: social.platform === 'Instagram' ? 'hover:bg-gradient-to-br hover:from-purple-600 hover:to-pink-500' :
              social.platform === 'Facebook' ? 'hover:bg-blue-600' :
-             social.platform === 'Twitter' ? 'hover:bg-sky-500' :
+             social.platform === 'TikTok' ? 'hover:bg-black' :
              'hover:bg-pink-400'
-    };
-  });
-  
-  const socialLinksToUse = socialLinksFromDB.length > 0 ? socialLinksFromDB : socialLinks;
+    }));
 
   useEffect(() => {
     const handleScroll = () => {
@@ -428,84 +437,137 @@ export const Navbar = () => {
                         </span>
                         
                         <div className="space-y-4 sm:space-y-6">
-                          <motion.a
-                            href={emailInfo.link}
-                            className="flex items-center gap-3 sm:gap-4 text-white/80 hover:text-primary-yellow 
-                                     transition-colors duration-300 group"
-                            whileHover={{ x: 10 }}
-                          >
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 flex items-center 
-                                          justify-center group-hover:bg-primary-yellow transition-all duration-300">
-                              <Mail size={18} className="sm:w-5 sm:h-5 group-hover:text-primary-dark transition-colors" />
-                            </div>
-                            <span className="text-sm sm:text-base md:text-lg break-all">{emailInfo.value}</span>
-                          </motion.a>
+                          {emailInfo && (
+                            <motion.a
+                              href={emailInfo.link}
+                              className="flex items-center gap-3 sm:gap-4 text-white/80 hover:text-primary-yellow 
+                                       transition-colors duration-300 group"
+                              whileHover={{ x: 10 }}
+                            >
+                              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 flex items-center 
+                                            justify-center group-hover:bg-primary-yellow transition-all duration-300">
+                                <Mail size={18} className="sm:w-5 sm:h-5 group-hover:text-primary-dark transition-colors" />
+                              </div>
+                              <span className="text-sm sm:text-base md:text-lg break-all">{emailInfo.value}</span>
+                            </motion.a>
+                          )}
 
-                          <motion.a
-                            href={phoneInfo.link}
-                            className="flex items-center gap-3 sm:gap-4 text-white/80 hover:text-primary-yellow 
-                                     transition-colors duration-300 group"
-                            whileHover={{ x: 10 }}
-                          >
-                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 flex items-center 
-                                          justify-center group-hover:bg-primary-yellow transition-all duration-300">
-                              <Phone size={18} className="sm:w-5 sm:h-5 group-hover:text-primary-dark transition-colors" />
-                            </div>
-                            <span className="text-sm sm:text-base md:text-lg">{phoneInfo.value}</span>
-                          </motion.a>
+                          {phoneInfo && (
+                            <motion.a
+                              href={phoneInfo.link}
+                              className="flex items-center gap-3 sm:gap-4 text-white/80 hover:text-primary-yellow 
+                                       transition-colors duration-300 group"
+                              whileHover={{ x: 10 }}
+                            >
+                              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 flex items-center 
+                                            justify-center group-hover:bg-primary-yellow transition-all duration-300">
+                                <Phone size={18} className="sm:w-5 sm:h-5 group-hover:text-primary-dark transition-colors" />
+                              </div>
+                              <span className="text-sm sm:text-base md:text-lg">{phoneInfo.value}</span>
+                            </motion.a>
+                          )}
+
+                          {whatsappInfo && (
+                            <motion.a
+                              href={whatsappInfo.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-3 sm:gap-4 text-white/80 hover:text-primary-yellow 
+                                       transition-colors duration-300 group"
+                              whileHover={{ x: 10 }}
+                            >
+                              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 flex items-center 
+                                            justify-center group-hover:bg-primary-yellow transition-all duration-300">
+                                <MessageCircle size={18} className="sm:w-5 sm:h-5 group-hover:text-primary-dark transition-colors" />
+                              </div>
+                              <span className="text-sm sm:text-base md:text-lg">{whatsappInfo.value}</span>
+                            </motion.a>
+                          )}
                         </div>
                       </div>
 
                       {/* Address */}
-                      <div>
-                        <span className="text-primary-yellow text-xs sm:text-sm tracking-[0.3em] font-medium mb-3 sm:mb-4 block">
-                          STUDIO LOCATION
-                        </span>
-                        <p className="text-white/60 text-sm sm:text-base md:text-lg leading-relaxed">
-                          123 Studio Street<br />
-                          Creative District<br />
-                          Accra, Ghana
-                        </p>
-                      </div>
+                      {locationInfo && (
+                        <div>
+                          <span className="text-primary-yellow text-xs sm:text-sm tracking-[0.3em] font-medium mb-3 sm:mb-4 block">
+                            STUDIO LOCATION
+                          </span>
+                          <motion.div
+                            className="flex items-start gap-3 sm:gap-4 text-white/60 hover:text-white/80 
+                                     transition-colors duration-300 group"
+                            whileHover={{ x: 10 }}
+                          >
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 flex items-center 
+                                          justify-center group-hover:bg-primary-yellow transition-all duration-300 flex-shrink-0">
+                              <MapPin size={18} className="sm:w-5 sm:h-5 group-hover:text-primary-dark transition-colors" />
+                            </div>
+                            <p className="text-sm sm:text-base md:text-lg leading-relaxed pt-2">
+                              {locationInfo.value}
+                            </p>
+                          </motion.div>
+                        </div>
+                      )}
                     </motion.div>
 
-                    {/* Social Links */}
+                    {/* Social Links - Only show if there are links */}
+                    {socialLinksFromDB.length > 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 30 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6, delay: 0.7 }}
+                        className="mt-8 sm:mt-10 lg:mt-12"
+                      >
+                        <span className="text-primary-yellow text-xs sm:text-sm tracking-[0.3em] font-medium mb-4 sm:mb-6 block">
+                          FOLLOW US
+                        </span>
+                        <div className="flex gap-3 sm:gap-4">
+                          {socialLinksFromDB.map((social, index) => (
+                            <motion.a
+                              key={social.label}
+                              href={social.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              aria-label={social.label}
+                              initial={{ opacity: 0, scale: 0 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ 
+                                duration: 0.5, 
+                                delay: 0.8 + index * 0.1,
+                                type: 'spring',
+                                stiffness: 200
+                              }}
+                              whileHover={{ scale: 1.2, rotate: 360 }}
+                              whileTap={{ scale: 0.9 }}
+                              className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/10 flex items-center justify-center
+                                       text-white ${social.color} hover:text-white
+                                       transition-all duration-500 backdrop-blur-sm border border-white/20
+                                       hover:border-transparent hover:shadow-lg`}
+                            >
+                              <social.icon size={18} className="sm:w-5 sm:h-5" />
+                            </motion.a>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* Built by Miqrotek */}
                     <motion.div
-                      initial={{ opacity: 0, y: 30 }}
+                      initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.7 }}
-                      className="mt-8 sm:mt-10 lg:mt-12"
+                      transition={{ duration: 0.6, delay: 0.9 }}
+                      className="mt-8 sm:mt-10 lg:mt-12 pt-6 border-t border-white/10"
                     >
-                      <span className="text-primary-yellow text-xs sm:text-sm tracking-[0.3em] font-medium mb-4 sm:mb-6 block">
-                        FOLLOW US
-                      </span>
-                      <div className="flex gap-3 sm:gap-4">
-                        {socialLinksToUse.map((social, index) => (
-                          <motion.a
-                            key={social.label}
-                            href={social.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            aria-label={social.label}
-                            initial={{ opacity: 0, scale: 0 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ 
-                              duration: 0.5, 
-                              delay: 0.8 + index * 0.1,
-                              type: 'spring',
-                              stiffness: 200
-                            }}
-                            whileHover={{ scale: 1.2, rotate: 360 }}
-                            whileTap={{ scale: 0.9 }}
-                            className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/10 flex items-center justify-center
-                                     text-white ${social.color} hover:text-white
-                                     transition-all duration-500 backdrop-blur-sm border border-white/20
-                                     hover:border-transparent hover:shadow-lg`}
-                          >
-                            <social.icon size={18} className="sm:w-5 sm:h-5" />
-                          </motion.a>
-                        ))}
-                      </div>
+                      <p className="text-center text-xs sm:text-sm text-white/40">
+                        Built by{' '}
+                        <a
+                          href="https://portfolio-sooty-eight-54.vercel.app/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary-yellow hover:text-white transition-colors font-semibold"
+                        >
+                          Miqrotek
+                        </a>
+                      </p>
                     </motion.div>
 
                     {/* Decorative Element */}
