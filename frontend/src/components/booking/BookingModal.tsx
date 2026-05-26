@@ -73,18 +73,52 @@ export const BookingModal = () => {
     setIsSubmitting(true);
     try {
       const values = getValues();
+      
+      // Ensure custom service/package values are used
+      const finalService = showCustomService ? customServiceValue : values.service;
+      const finalPackage = showCustomPackage ? customPackageValue : values.package;
+      
+      // Validate custom inputs
+      if (showCustomService && !customServiceValue.trim()) {
+        toast.error('Please specify your service');
+        setIsSubmitting(false);
+        return;
+      }
+      
+      if (showCustomPackage && !customPackageValue.trim()) {
+        toast.error('Please specify your package needs');
+        setIsSubmitting(false);
+        return;
+      }
+      
       const answersPayload = customQuestions.map((q: any) => ({
         questionId: q.id,
         question: q.label,
         answer: customAnswers[q.id] || '',
       }));
-      await bookingsApi.create({ ...values, customAnswers: answersPayload } as any);
+      
+      const bookingData = {
+        service: finalService,
+        preferredDate: values.preferredDate,
+        package: finalPackage,
+        fullName: values.fullName,
+        email: values.email,
+        phone: values.phone,
+        message: values.message,
+        customAnswers: answersPayload,
+      };
+      
+      console.log('Submitting booking:', bookingData);
+      
+      await bookingsApi.create(bookingData as any);
       setIsSuccess(true);
     } catch (error: any) {
+      console.error('Booking error:', error);
       if (error?.message?.includes('Network Error') || error?.code === 'ERR_NETWORK') {
         toast.error('Network error. Please check your internet connection and try again.');
       } else {
-        toast.error(error.response?.data?.message || 'Failed to submit booking. Please try again.');
+        const errorMsg = error.response?.data?.message || error.message || 'Failed to submit booking. Please try again.';
+        toast.error(errorMsg);
       }
     } finally {
       setIsSubmitting(false);
