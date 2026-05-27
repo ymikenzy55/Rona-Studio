@@ -285,8 +285,9 @@ export const ContentPage = () => {
             <button
               onClick={() => handleSave('hero')}
               disabled={updateMutation.isPending}
-              className="flex items-center gap-2 px-6 py-3 bg-primary-yellow text-primary-dark 
-                       font-bold rounded-lg hover:bg-yellow-500 transition-colors disabled:opacity-50"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary-yellow text-primary-dark 
+                       font-bold rounded-lg hover:bg-yellow-500 active:bg-yellow-600 transition-colors 
+                       disabled:opacity-50 touch-manipulation"
             >
               <Save size={20} />
               {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
@@ -378,7 +379,7 @@ export const ContentPage = () => {
                   Story Paragraphs
                 </label>
                 {(getCurrentContent('about').story?.paragraphs || ['']).map((paragraph: string, index: number) => (
-                  <div key={index} className="flex gap-2">
+                  <div key={index} className="flex flex-col sm:flex-row gap-2">
                     <textarea
                       value={paragraph}
                       onChange={(e) => {
@@ -400,7 +401,7 @@ export const ContentPage = () => {
                         paragraphs.splice(index, 1);
                         updateField('about', 'story', { ...story, paragraphs });
                       }}
-                      className="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-xs h-fit"
+                      className="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-xs h-fit touch-manipulation whitespace-nowrap"
                     >
                       Remove
                     </button>
@@ -511,8 +512,9 @@ export const ContentPage = () => {
             <button
               onClick={() => handleSave('about')}
               disabled={updateMutation.isPending}
-              className="flex items-center gap-2 px-6 py-3 bg-primary-yellow text-primary-dark 
-                       font-bold rounded-lg hover:bg-yellow-500 transition-colors disabled:opacity-50"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary-yellow text-primary-dark 
+                       font-bold rounded-lg hover:bg-yellow-500 active:bg-yellow-600 transition-colors 
+                       disabled:opacity-50 touch-manipulation"
             >
               <Save size={20} />
               {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
@@ -753,8 +755,9 @@ export const ContentPage = () => {
             <button
               onClick={() => handleSave('services')}
               disabled={updateMutation.isPending}
-              className="flex items-center gap-2 px-6 py-3 bg-primary-yellow text-primary-dark 
-                       font-bold rounded-lg hover:bg-yellow-500 transition-colors disabled:opacity-50"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary-yellow text-primary-dark 
+                       font-bold rounded-lg hover:bg-yellow-500 active:bg-yellow-600 transition-colors 
+                       disabled:opacity-50 touch-manipulation"
             >
               <Save size={20} />
               {updateMutation.isPending ? 'Saving...' : 'Save Changes'}
@@ -1253,8 +1256,9 @@ export const ContentPage = () => {
             <button
               onClick={() => handleSave('general')}
               disabled={updateMutation.isPending}
-              className="flex items-center gap-2 px-6 py-3 bg-primary-yellow text-primary-dark 
-                       font-bold rounded-lg hover:bg-yellow-500 transition-colors disabled:opacity-50"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary-yellow text-primary-dark 
+                       font-bold rounded-lg hover:bg-yellow-500 active:bg-yellow-600 transition-colors 
+                       disabled:opacity-50 touch-manipulation"
             >
               <Save size={20} />
               {updateMutation.isPending ? 'Saving...' : 'Save Changes'}

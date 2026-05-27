@@ -26,6 +26,7 @@ const navItems = [
   { path: '/admin/gallery', icon: Image, label: 'Gallery' },
   { path: '/admin/booking-config', icon: Calendar, label: 'Booking Form' },
   { path: '/admin/settings', icon: Settings, label: 'Settings' },
+  { path: 'logout', icon: LogOut, label: 'Logout', isLogout: true },
 ];
 
 interface AdminSidebarProps {
@@ -115,6 +116,26 @@ const SidebarContent = ({
               ? location.pathname === item.path
               : location.pathname.startsWith(item.path);
           const showBadge = item.path === '/admin/messages' && unreadCount > 0;
+          const isLogout = item.isLogout;
+
+          if (isLogout) {
+            return (
+              <button
+                key="logout"
+                onClick={() => { setIsMobileOpen(false); onLogout(); }}
+                className={`w-full flex items-center gap-3 rounded-xl px-3 py-3
+                           text-white/60 hover:bg-red-500/20 hover:text-red-400
+                           transition-all duration-200
+                           ${isCollapsed && !mobile ? 'justify-center' : ''}
+                `}
+              >
+                <item.icon size={20} className="flex-shrink-0" />
+                {(!isCollapsed || mobile) && (
+                  <span className="text-sm font-medium">{item.label}</span>
+                )}
+              </button>
+            );
+          }
 
           return (
             <NavLink
@@ -145,24 +166,6 @@ const SidebarContent = ({
           );
         })}
       </nav>
-
-      {/* Logout - with safe area padding for mobile */}
-      <div className="px-2 py-4 pb-safe border-t border-white/10">
-        <button
-          onClick={() => { setIsMobileOpen(false); onLogout(); }}
-          title={isCollapsed && !mobile ? 'Logout' : undefined}
-          className={`w-full flex items-center gap-3 rounded-xl px-3 py-3
-                     text-white/60 hover:bg-red-500/20 hover:text-red-400
-                     transition-all duration-200
-                     ${isCollapsed && !mobile ? 'justify-center' : ''}
-          `}
-        >
-          <LogOut size={20} className="flex-shrink-0" />
-          {(!isCollapsed || mobile) && (
-            <span className="text-sm font-medium">Logout</span>
-          )}
-        </button>
-      </div>
     </div>
   );
 };
