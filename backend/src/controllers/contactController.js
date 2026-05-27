@@ -86,7 +86,7 @@ export const markAsRead = asyncHandler(async (req, res) => {
     throw new Error('Message not found');
   }
 
-  message.read = true;
+  message.isRead = true;
   await message.save();
 
   res.status(200).json({

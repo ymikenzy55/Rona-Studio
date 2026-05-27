@@ -15,10 +15,11 @@ const contactSchema = new mongoose.Schema(
     },
     phone: {
       type: String,
-      required: [true, 'Phone number is required'],
       trim: true,
       validate: {
         validator: function(v) {
+          // Allow empty or 10 digits
+          if (!v || v.trim() === '') return true;
           return /^\d{10}$/.test(v.replace(/\D/g, ''));
         },
         message: 'Phone number must be exactly 10 digits'
@@ -32,7 +33,7 @@ const contactSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Message is required'],
     },
-    read: {
+    isRead: {
       type: Boolean,
       default: false,
     },

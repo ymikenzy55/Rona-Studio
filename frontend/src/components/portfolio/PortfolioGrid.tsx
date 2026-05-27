@@ -121,14 +121,14 @@ export const PortfolioGrid = () => {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 lg:gap-8">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="skeleton h-64 sm:h-80 md:h-96 rounded-2xl" />
+              <div key={i} className="skeleton h-48 sm:h-64 md:h-80 lg:h-96 rounded-2xl" />
             ))}
           </div>
         )}
 
-        {/* Projects Grid - Improved Responsiveness */}
+        {/* Projects Grid - 2 columns on mobile, 3 on desktop */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeCategory}
@@ -136,7 +136,7 @@ export const PortfolioGrid = () => {
             initial="initial"
             whileInView="animate"
             viewport={{ once: true, margin: "-50px" }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8"
+            className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6 lg:gap-8"
           >
             {filteredProjects.map((project, index) => (
               <motion.div

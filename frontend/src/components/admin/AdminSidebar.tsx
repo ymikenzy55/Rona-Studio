@@ -108,7 +108,7 @@ const SidebarContent = ({
       )}
 
       {/* Nav */}
-      <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1 scrollbar-thin scrollbar-thumb-primary-yellow/30 scrollbar-track-transparent hover:scrollbar-thumb-primary-yellow/50">
+      <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-1 scrollbar-thin scrollbar-thumb-primary-yellow/30 scrollbar-track-transparent hover:scrollbar-thumb-primary-yellow/50 pb-safe">
         {navItems.map((item) => {
           const isActive =
             item.exact
@@ -146,8 +146,8 @@ const SidebarContent = ({
         })}
       </nav>
 
-      {/* Logout */}
-      <div className="px-2 py-4 border-t border-white/10">
+      {/* Logout - with safe area padding for mobile */}
+      <div className="px-2 py-4 pb-safe border-t border-white/10">
         <button
           onClick={() => { setIsMobileOpen(false); onLogout(); }}
           title={isCollapsed && !mobile ? 'Logout' : undefined}

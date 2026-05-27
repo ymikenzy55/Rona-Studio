@@ -17,7 +17,6 @@ export const SettingsPage = () => {
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'security', label: 'Security', icon: Lock },
     { id: 'admins', label: 'Admin Users', icon: Users },
-    { id: 'booking-form', label: 'Booking Form', icon: ClipboardList },
   ];
 
   return (
@@ -48,7 +47,6 @@ export const SettingsPage = () => {
           {activeTab === 'profile' && <ProfileTab />}
           {activeTab === 'security' && <SecurityTab />}
           {activeTab === 'admins' && <AdminsTab queryClient={queryClient} />}
-          {activeTab === 'booking-form' && <BookingFormTab />}
         </motion.div>
       </AnimatePresence>
     </div>

@@ -24,6 +24,11 @@
     overflow-x: hidden;
   }
 
+  /* Safe area padding for mobile devices */
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 1rem);
+  }
+
   /* Page-independent scrolling - each section is a page */
   section {
     min-height: 100vh;
