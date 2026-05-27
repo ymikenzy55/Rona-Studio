@@ -430,7 +430,7 @@ export const ContentPage = () => {
                 </p>
                 {(getCurrentContent('about').story?.images || []).map((image: string, index: number) => (
                   <div key={index} className="mb-3 p-3 bg-white rounded border border-gray-300">
-                    <div className="flex gap-2 mb-2">
+                    <div className="flex flex-col gap-2 mb-2">
                       <input
                         type="url"
                         value={image}
@@ -441,51 +441,52 @@ export const ContentPage = () => {
                           updateField('about', 'story', { ...story, images });
                         }}
                         placeholder="https://images.unsplash.com/..."
-                        className="flex-1 px-3 py-2 rounded border border-gray-300 
+                        className="w-full px-3 py-2 rounded border border-gray-300 
                                  focus:border-primary-yellow focus:outline-none text-sm"
                       />
-                      <button
-                        type="button"
-                        onClick={async () => {
-                          const input = document.createElement('input');
-                          input.type = 'file';
-                          input.accept = 'image/*';
-                          input.onchange = async (e: any) => {
-                            const file = e.target.files?.[0];
-                            if (!file) return;
-                            try {
-                              toast.loading('Uploading image...');
-                              const response = await uploadApi.uploadImage(file);
-                              const story = getCurrentContent('about').story || {};
-                              const images = [...(story.images || [])];
-                              images[index] = response.data.url;
-                              updateField('about', 'story', { ...story, images });
-                              toast.dismiss();
-                              toast.success('Image uploaded successfully');
-                            } catch {
-                              toast.dismiss();
-                              toast.error('Upload failed');
-                            }
-                          };
-                          input.click();
-                        }}
-                        className="px-4 py-2 bg-primary-yellow text-primary-dark rounded font-bold text-xs hover:bg-yellow-500 transition-colors whitespace-nowrap"
-                      >
-                        Upload
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const story = getCurrentContent('about').story || {};
-                          const images = [...(story.images || [])];
-                          images.splice(index, 1);
-                          updateField('about', 'story', { ...story, images });
-                        }}
-                        className="px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-xs"
-                      >
-                        Remove
-                      </button>
-                    </div>
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.accept = 'image/*';
+                            input.onchange = async (e: any) => {
+                              const file = e.target.files?.[0];
+                              if (!file) return;
+                              try {
+                                toast.loading('Uploading image...');
+                                const response = await uploadApi.uploadImage(file);
+                                const story = getCurrentContent('about').story || {};
+                                const images = [...(story.images || [])];
+                                images[index] = response.data.url;
+                                updateField('about', 'story', { ...story, images });
+                                toast.dismiss();
+                                toast.success('Image uploaded successfully');
+                              } catch {
+                                toast.dismiss();
+                                toast.error('Upload failed');
+                              }
+                            };
+                            input.click();
+                          }}
+                          className="flex-1 px-4 py-2 bg-primary-yellow text-primary-dark rounded font-bold text-xs hover:bg-yellow-500 transition-colors whitespace-nowrap touch-manipulation"
+                        >
+                          Upload
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const story = getCurrentContent('about').story || {};
+                            const images = [...(story.images || [])];
+                            images.splice(index, 1);
+                            updateField('about', 'story', { ...story, images });
+                          }}
+                          className="flex-1 px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-xs touch-manipulation whitespace-nowrap"
+                        >
+                          Remove
+                        </button>
+                      </div>
                     {image && (
                       <img 
                         src={image} 
@@ -696,7 +697,7 @@ export const ContentPage = () => {
                     <label className="block text-xs font-bold text-gray-700 mb-2">
                       Background Image
                     </label>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col gap-2">
                       <input
                         type="url"
                         value={service.image || ''}
@@ -706,7 +707,7 @@ export const ContentPage = () => {
                           updateField('services', 'services', services);
                         }}
                         placeholder="https://images.unsplash.com/..."
-                        className="flex-1 px-3 py-2 rounded border border-gray-300 
+                        className="w-full px-3 py-2 rounded border border-gray-300 
                                  focus:border-primary-yellow focus:outline-none text-sm"
                       />
                       <button
@@ -733,7 +734,7 @@ export const ContentPage = () => {
                           };
                           input.click();
                         }}
-                        className="px-4 py-2 bg-primary-yellow text-primary-dark rounded font-bold text-xs hover:bg-yellow-500 transition-colors whitespace-nowrap"
+                        className="w-full px-4 py-2 bg-primary-yellow text-primary-dark rounded font-bold text-sm hover:bg-yellow-500 active:bg-yellow-600 transition-colors touch-manipulation"
                       >
                         Upload Image
                       </button>
