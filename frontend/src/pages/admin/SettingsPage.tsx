@@ -58,6 +58,7 @@ const ProfileTab = () => {
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
 
   const { data: profile } = useQuery({
     queryKey: ['my-profile'],
@@ -82,6 +83,11 @@ const ProfileTab = () => {
     onSuccess: () => {
       toast.success('Profile updated');
       setAvatarFile(null);
+      setAvatarPreview(null);
+      // Invalidate queries to refresh profile data everywhere
+      queryClient.invalidateQueries({ queryKey: ['my-profile'] });
+      queryClient.invalidateQueries({ queryKey: ['admins'] });
+      queryClient.invalidateQueries({ queryKey: ['site-content'] });
     },
     onError: (e: any) => toast.error(e.response?.data?.message || 'Failed to update profile'),
   });

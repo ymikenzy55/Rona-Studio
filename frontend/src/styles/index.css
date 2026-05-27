@@ -20,8 +20,18 @@
 
   html {
     scroll-behavior: auto; /* Let Lenis handle smoothness */
-    overflow-y: scroll;
     overflow-x: hidden;
+  }
+
+  /* Ensure admin pages can scroll normally */
+  html:has(body.admin-page) {
+    overflow-y: auto !important;
+    height: auto !important;
+  }
+
+  body.admin-page {
+    overflow-y: auto !important;
+    height: auto !important;
   }
 
   /* Safe area padding for mobile devices */
@@ -95,15 +105,6 @@
 
   html.modal-open:not(.admin-page) {
     overflow: hidden !important;
-  }
-
-  /* Ensure admin pages can scroll */
-  body.admin-page {
-    overflow: auto !important;
-  }
-
-  html:has(body.admin-page) {
-    overflow: auto !important;
   }
 }
 
@@ -271,8 +272,8 @@
   }
 }
 
-/* Lenis Smooth Scroll with snap behavior */
-html.lenis {
+/* Lenis Smooth Scroll with snap behavior - only for non-admin pages */
+html.lenis:not(:has(body.admin-page)) {
   height: auto;
 }
 
@@ -293,11 +294,11 @@ html.lenis {
 }
 
 /* Remove conflicting scroll-snap */
-html {
+html:not(:has(body.admin-page)) {
   scroll-behavior: auto;
   overflow-x: hidden;
 }
 
-body {
+body:not(.admin-page) {
   overflow-x: hidden;
 }
