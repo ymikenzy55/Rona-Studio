@@ -431,19 +431,7 @@ export const ContentPage = () => {
                 {(getCurrentContent('about').story?.images || []).map((image: string, index: number) => (
                   <div key={index} className="mb-3 p-3 bg-white rounded border border-gray-300">
                     <div className="flex flex-col gap-2 mb-2">
-                      <input
-                        type="url"
-                        value={image}
-                        onChange={(e) => {
-                          const story = getCurrentContent('about').story || {};
-                          const images = [...(story.images || [])];
-                          images[index] = e.target.value;
-                          updateField('about', 'story', { ...story, images });
-                        }}
-                        placeholder="https://images.unsplash.com/..."
-                        className="w-full px-3 py-2 rounded border border-gray-300 
-                                 focus:border-primary-yellow focus:outline-none text-sm"
-                      />
+                      {/* Upload button first on mobile */}
                       <div className="flex gap-2">
                         <button
                           type="button"
@@ -470,7 +458,7 @@ export const ContentPage = () => {
                             };
                             input.click();
                           }}
-                          className="flex-1 px-4 py-2 bg-primary-yellow text-primary-dark rounded font-bold text-xs hover:bg-yellow-500 transition-colors whitespace-nowrap touch-manipulation"
+                          className="flex-1 px-4 py-2 bg-primary-yellow text-primary-dark rounded font-bold text-sm hover:bg-yellow-500 transition-colors touch-manipulation whitespace-nowrap"
                         >
                           Upload
                         </button>
@@ -482,11 +470,26 @@ export const ContentPage = () => {
                             images.splice(index, 1);
                             updateField('about', 'story', { ...story, images });
                           }}
-                          className="flex-1 px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-xs touch-manipulation whitespace-nowrap"
+                          className="flex-1 px-3 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm touch-manipulation whitespace-nowrap"
                         >
                           Remove
                         </button>
                       </div>
+                      {/* URL input below */}
+                      <input
+                        type="url"
+                        value={image}
+                        onChange={(e) => {
+                          const story = getCurrentContent('about').story || {};
+                          const images = [...(story.images || [])];
+                          images[index] = e.target.value;
+                          updateField('about', 'story', { ...story, images });
+                        }}
+                        placeholder="Or paste image URL here..."
+                        className="w-full px-3 py-2 rounded border border-gray-300 
+                                 focus:border-primary-yellow focus:outline-none text-sm"
+                      />
+                    </div>
                     {image && (
                       <img 
                         src={image} 
@@ -698,18 +701,7 @@ export const ContentPage = () => {
                       Background Image
                     </label>
                     <div className="flex flex-col gap-2">
-                      <input
-                        type="url"
-                        value={service.image || ''}
-                        onChange={(e) => {
-                          const services = [...(getCurrentContent('services').services || [])];
-                          services[index] = { ...services[index], image: e.target.value };
-                          updateField('services', 'services', services);
-                        }}
-                        placeholder="https://images.unsplash.com/..."
-                        className="w-full px-3 py-2 rounded border border-gray-300 
-                                 focus:border-primary-yellow focus:outline-none text-sm"
-                      />
+                      {/* Upload button first */}
                       <button
                         type="button"
                         onClick={async () => {
@@ -734,10 +726,23 @@ export const ContentPage = () => {
                           };
                           input.click();
                         }}
-                        className="w-full px-4 py-2 bg-primary-yellow text-primary-dark rounded font-bold text-sm hover:bg-yellow-500 active:bg-yellow-600 transition-colors touch-manipulation"
+                        className="w-full px-4 py-3 bg-primary-yellow text-primary-dark rounded-lg font-bold text-sm hover:bg-yellow-500 active:bg-yellow-600 transition-colors touch-manipulation"
                       >
                         Upload Image
                       </button>
+                      {/* URL input below */}
+                      <input
+                        type="url"
+                        value={service.image || ''}
+                        onChange={(e) => {
+                          const services = [...(getCurrentContent('services').services || [])];
+                          services[index] = { ...services[index], image: e.target.value };
+                          updateField('services', 'services', services);
+                        }}
+                        placeholder="Or paste image URL here..."
+                        className="w-full px-3 py-2 rounded border border-gray-300 
+                                 focus:border-primary-yellow focus:outline-none text-sm"
+                      />
                     </div>
                     {service.image && (
                       <div className="mt-3">
